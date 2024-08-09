@@ -1,0 +1,6 @@
+@ChatGram_HostAddress = http://localhost:5087
+
+GET {{ChatGram_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
