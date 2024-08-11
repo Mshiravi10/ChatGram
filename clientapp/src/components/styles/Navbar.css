@@ -1,0 +1,57 @@
+.navbar {
+    position: fixed; /* این خط باعث می‌شود نوار ناوبری به بالای صفحه بچسبد */
+    top: 0;
+    left: 0;
+    width: 100%; /* عرض نوار ناوبری به اندازه کل صفحه */
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #bd530d; /* رنگ پس‌زمینه روشن‌تر */
+    z-index: 1000;
+    height: fit-content; /* این خط تضمین می‌کند که نوار ناوبری همیشه در بالاترین لایه قرار داشته باشد */
+}
+
+.logo h1 {
+    color: #ffffff;
+    font-size: 1.5rem;
+}
+
+.nav-links {
+    display: flex;
+}
+
+.nav-link {
+    margin-left: 15px;
+    padding: 10px 20px;
+    background-color: #ff8533; /* رنگ دکمه‌ها روشن‌تر شده است */
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.nav-link:hover {
+    background-color: #e67300; /* رنگ دکمه‌ها در حالت هاور روشن‌تر شده است */
+}
+
+.app {
+    padding-top: 60px; /* این خط فضای بالای صفحه را برای نوار ناوبری ثابت اختصاص می‌دهد */
+}
+
+/* حذف خط زیر لینک و اعمال استایل سفارشی به متن */
+.nav-logo {
+    text-decoration: none;
+    color: inherit; /* متن لینک همان رنگ معمولی متن را خواهد داشت */
+  }
+  
+  .nav-logo h1 {
+    font-size: 24px; /* اندازه فونت */
+    font-weight: bold; /* ضخامت فونت */
+    margin: 0; /* حذف فضای اضافی */
+    padding: 0; /* حذف فضای اضافی */
+  }
+  
+  /* استایل مخصوص به هنگام هاور */
+  .nav-logo:hover h1 {
+    color: #555; /* تغییر رنگ به هنگام هاور */
+  }
+  
