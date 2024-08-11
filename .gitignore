@@ -1,0 +1,12 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ChatGram/Application/obj
+/ChatGram/ChatGram/obj
+/ChatGram/Domain/obj
+/ChatGram/Infrastructure/obj
+/ChatGram/Application/bin/Debug/net8.0
+/ChatGram/ChatGram/bin/Debug/net8.0
+/ChatGram/Domain/bin/Debug/net8.0
+/ChatGram/Infrastructure/bin/Debug/net8.0
