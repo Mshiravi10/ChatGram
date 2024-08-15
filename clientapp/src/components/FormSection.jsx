@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useFormik } from "formik";
 import { useDropzone } from "react-dropzone";
 import FileUploaderModal from "./FileUploaderModal";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,6 +13,8 @@ function FormSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [croppedImage, setCroppedImage] = useState(null);
   const [originalFile, setOriginalFile] = useState(null);
+  const [profileId, setProfileId] = useState(null);
+  const navigate = useNavigate();
 
   const { getRootProps, getInputProps } = useDropzone({
     accept: "image/jpeg, image/png",
@@ -29,17 +32,20 @@ function FormSection() {
     },
   });
 
-  const handleCrop = (blob) => {
+  const handleCrop = async (blob) => {
     const url = URL.createObjectURL(blob);
     setCroppedImage(url);
-    handleUpload(originalFile, blob); // Correctly passing the original file and the cropped blob
+    const sessionId = await handleUpload(originalFile, blob);
+    if (sessionId) {
+      setProfileId(sessionId);
+    }
   };
 
   const handleUpload = async (file, blob) => {
     try {
       const chunkSize = blob.size;
       const totalSize = blob.size;
-      const fileName = file.name; // Preserve the original file name
+      const fileName = file.name;
 
       const sessionId = await startUploadSession(fileName, totalSize, chunkSize);
 
@@ -48,14 +54,16 @@ function FormSection() {
       await completeUploadSession(sessionId);
 
       toast.success("Upload successful!");
+      return sessionId; 
     } catch (error) {
       toast.error("Upload failed.");
+      return null;
     }
   };
 
   const startUploadSession = async (fileName, totalSize, chunkSize) => {
     try {
-      const response = await axios.post("https://localhost:7269/api/fileupload/start-upload", {
+      const response = await axios.post("http://localhost:8920/api/fileupload/start-upload", {
         fileName,
         chunkSize,
         totalSize,
@@ -74,7 +82,7 @@ function FormSection() {
       formData.append("ChunkIndex", chunkIndex);
       formData.append("ChunkFile", chunkFile);
 
-      await axios.post("https://localhost:7269/api/fileupload/upload-chunk", formData);
+      await axios.post("http://localhost:8920/api/fileupload/upload-chunk", formData);
     } catch (error) {
       toast.error(`Failed to upload chunk ${chunkIndex}`);
       throw error;
@@ -83,7 +91,7 @@ function FormSection() {
 
   const completeUploadSession = async (sessionId) => {
     try {
-      await axios.post("https://localhost:7269/api/fileupload/complete-upload", {
+      await axios.post("http://localhost:8920/api/fileupload/complete-upload", {
         sessionId,
       });
     } catch (error) {
@@ -97,6 +105,7 @@ function FormSection() {
       firstName: "",
       lastName: "",
       email: "",
+      userName: "", // New UserName field
       password: "",
       confirmPassword: "",
     },
@@ -122,6 +131,12 @@ function FormSection() {
         errors.email = "Invalid email address";
       }
 
+      if (!values.userName) {
+        errors.userName = "User Name is required"; // Validation for UserName
+      } else if (values.userName.length < 5 || values.userName.length > 15) {
+        errors.userName = "User Name must be between 5 and 15 characters";
+      }
+
       if (!values.password) {
         errors.password = "Password is required";
       } else if (values.password.length < 8) {
@@ -137,8 +152,25 @@ function FormSection() {
       return errors;
     },
     onSubmit: async (values) => {
-      // Handle form submission here
+      try {
+        const command = {
+          ...values,
+          profileId: profileId ? profileId : null,
+        };
+    
+        const response = await axios.post("http://localhost:8920/api/user/register", command);
+    
+        if (response.data.success) {
+          toast.success(response.data.message || "Registration successful!");
+          navigate('/login');
+        } else {
+          toast.error(response.data.message || "Registration failed.");
+        }
+      } catch (error) {
+        toast.error("Registration failed due to an error.");
+      }
     },
+    
   });
 
   return (
@@ -150,13 +182,13 @@ function FormSection() {
       <div className="form-container">
         <div className="upload-container" {...getRootProps()}>
           <input {...getInputProps()} />
-              <label className={`upload-label ${croppedImage ? 'image-uploaded' : ''}`}>
-                {croppedImage ? (
-                  <img src={croppedImage} alt="Cropped" />
-                ) : (
-                  <span></span>
-                )}
-              </label>
+          <label className={`upload-label ${croppedImage ? 'image-uploaded' : ''}`}>
+            {croppedImage ? (
+              <img src={croppedImage} alt="Cropped" />
+            ) : (
+              <span></span>
+            )}
+          </label>
         </div>
         <form onSubmit={formik.handleSubmit}>
           <input
@@ -186,6 +218,15 @@ function FormSection() {
             value={formik.values.email}
           />
           {formik.errors.email && <div className="error">{formik.errors.email}</div>}
+          <input
+            type="text"
+            placeholder="User Name" // New UserName input field
+            name="userName"
+            id="userName"
+            onChange={formik.handleChange}
+            value={formik.values.userName}
+          />
+          {formik.errors.userName && <div className="error">{formik.errors.userName}</div>}
           <input
             type="password"
             placeholder="Password"

@@ -97,6 +97,11 @@ namespace Api.Controllers.V1.FileUpload
             string tempFilePath = FilePaths.GetTempFilePath(session.SessionId);
             string finalFilePath = FilePaths.GetFinalFilePath(session.FileName);
 
+            if (System.IO.File.Exists(finalFilePath))
+            {
+                System.IO.File.Delete(finalFilePath);
+            }
+
             System.IO.File.Move(tempFilePath, finalFilePath);
 
 
