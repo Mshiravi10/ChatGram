@@ -46,7 +46,7 @@ namespace Application.Users.Services
                 Email = command.Email,
                 FirstName = command.FirstName,
                 LastName = command.LastName,
-                ProfileId = profileId
+                ProfileId = profileId,
             };
 
             var result = await _userManager.CreateAsync(user, command.Password);

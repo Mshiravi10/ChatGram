@@ -11,5 +11,6 @@ namespace Application.Files.Commands
         public string FileName { get; set; }      // نام فایل
         public long ChunkSize { get; set; }       // اندازه هر chunk (بایت)
         public long TotalSize { get; set; }       // اندازه کل فایل (بایت)
+
     }
 }

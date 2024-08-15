@@ -73,11 +73,9 @@ namespace Infrastructure.Data
                       .HasColumnType("bit");
 
                 entity.Property(e => e.FileUrl)
-                      .IsRequired()
                       .HasColumnType("nvarchar(max)");
 
                 entity.Property(e => e.Description)
-                      .IsRequired()
                       .HasColumnType("nvarchar(max)");
             });
 

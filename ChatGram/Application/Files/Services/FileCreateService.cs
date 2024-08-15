@@ -36,6 +36,7 @@ namespace Application.Files.Services
                 Data = fileData,
                 RowGuid = Guid.NewGuid(),
                 IsDeleted = false,
+                Description = ""
                 
             };
 
